@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Fireworks</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 20px;
+        }
+        button {
+            background-color: pink;
+            color: white;
+            font-size: 22px;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworksCanvas"></canvas>
+    <h1>Love Fireworks for You ❤️</h1>
+    <div class="button-container">
+        <button onclick="goToNextPage()">打開卡片!</button>
+    </div>
+    <audio id="explosionSound" src="sound1.mp3"></audio>
+    <script>
+        const canvas = document.getElementById("fireworksCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fireworks = [];
+        const colors = ["rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)", "rgb(255, 255, 0)", "rgb(255, 165, 0)", "rgb(255, 192, 203)", "rgb(230, 230, 250)"];
+
+        class Particle {
+            constructor(x, y, color, angle, speed, lifetime) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.angle = angle;
+                this.speed = speed;
+                this.radius = Math.random() * 3 + 1;
+                this.velX = Math.cos(angle) * speed;
+                this.velY = Math.sin(angle) * speed;
+                this.gravity = 0.04;
+                this.lifetime = lifetime;
+                this.fadeRate = 255 / lifetime;
+                this.alpha = 255;
+            }
+
+            update() {
+                this.x += this.velX;
+                this.y += this.velY;
+                this.velY += this.gravity;
+                this.alpha = Math.max(0, this.alpha - this.fadeRate);
+                this.lifetime -= 1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(${this.color.replace("rgb(", "").replace(")", "")}, ${this.alpha / 255})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Firework {
+            constructor(x, y, shape = "circle") {
+                this.x = x;
+                this.y = y;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.particles = [];
+                this.exploded = false;
+                this.shape = shape;
+            }
+
+            explode() {
+                if (this.shape === "heart") {
+                    this.createHeartShape();
+                } else {
+                    this.createCircleShape();
+                }
+                document.getElementById("explosionSound").play();
+                this.exploded = true;
+            }
+
+            createCircleShape() {
+                for (let i = 0; i < 50; i++) {
+                    let angle = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 5 + 2;
+                    let lifetime = Math.random() * 80 + 60;
+                    this.particles.push(new Particle(this.x, this.y, this.color, angle, speed, lifetime));
+                }
+            }
+
+            createHeartShape() {
+                for (let angle = 0; angle < 360; angle += 10) {
+                    let radian = angle * (Math.PI / 180);
+                    let xOffset = 16 * Math.pow(Math.sin(radian), 3);
+                    let yOffset = 13 * Math.cos(radian) - 5 * Math.cos(2 * radian) - 2 * Math.cos(3 * radian) - Math.cos(4 * radian);
+                    let xProj = this.x + xOffset * 5;
+                    let yProj = this.y - yOffset * 5;
+                    this.particles.push(new Particle(xProj, yProj, this.color, radian, Math.random() * 3 + 1, 50));
+                }
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.explode();
+                }
+                this.particles.forEach(p => p.update());
+                this.particles = this.particles.filter(p => p.lifetime > 0);
+            }
+
+            draw() {
+                this.particles.forEach(p => p.draw());
+            }
+        }
+
+        function launchFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height / 2);
+            const shape = Math.random() < 0.2 ? "heart" : "circle";
+            fireworks.push(new Firework(x, y, shape));
+        }
+
+        function animate() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.particles.length === 0) fireworks.splice(index, 1);
+            });
+            if (Math.random() < 0.1) launchFirework();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        function goToNextPage() {
+            window.location.href = "card.html";
+        }
+        function goToPreviousPage() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

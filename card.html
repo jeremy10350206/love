@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浪漫情書</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #fefaf5;
+            color: #5a3e36;
+            font-family: 'Dancing Script', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .letter {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+        }
+        .title {
+            font-size: 2.5em;
+            color: #d72638;
+            font-weight: bold;
+        }
+        #message {
+            font-size: 1.5em;
+            line-height: 1.8;
+            color: #5a3e36;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            background-color: #ff007f;
+            color: white;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: #ff66a3;
+            transform: scale(1.1);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+  <audio id="backgroundMusic" autoplay loop>
+    <source src="./music.mp3" type="audio/mpeg">
+</audio>
+<!-- <audio id="backgroundMusic" src="./music.mp3"></audio> -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let music = document.getElementById("backgroundMusic");
+
+        let playPromise = music.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("自動播放失敗，等待用戶互動");
+            });
+        }
+    });
+</script>
+
+
+    <div class="letter" id="page1">
+        <h2 class="title">💖 寶寶 💖</h2>
+        <p id="message">寶寶從昨天開始我真的變得超幸福的 😚💖<br>我們終於在一起了耶 🎉✨<br>那一刻我的心跳超快的，因為我真的好愛好愛妳 🌟🌙</p>
+        <div class="button-container">
+            <button onclick="goToFirstPage()">返回</button>
+            <button onclick="nextPage(1)">下一頁</button>
+        </div>
+    </div>
+    <div class="letter hidden" id="page2">
+        <h2 class="title">😍 超喜歡妳 💕</h2>
+        <p id="message">我真的超級喜歡妳 💕<br>每次跟妳聊天都覺得超開心<br>妳的可愛、妳的笑容、妳的所有都讓我心動不已 😍💓<br>現在我終於可以理直氣壯地說，妳是我的女朋友了 🥰💙</p>
+        <div class="button-container">
+            <button onclick="goToPreviousPage(2)">返回</button>
+            <button onclick="nextPage(2)">下一頁</button>
+        </div>
+    </div>
+    <div class="letter hidden" id="page3">
+        <h2 class="title">💙 我永遠愛妳！❤️ 💙</h2>
+        <p id="message">未來的日子我會一直陪著妳，牽著妳的手去看世界 🌍<br>一起吃好多好吃的東西 🍰🍜🍣<br>一起分享快樂和難過，一起擁抱，一起撒嬌，一起度過每一個特別的時刻 🤗💞</p>
+        <div class="button-container">
+            <button onclick="goToPreviousPage(3)">返回</button>
+            <button onclick="nextPage(3)">下一頁</button>
+        </div>
+    </div>
+    <div class="letter hidden" id="page4">
+      <h2 class="title">💙 真的好愛好愛妳 💙</h2>
+      <p id="message">妳不是我權衡利弊後的選擇 💙💙💙<br>而是我明知不可為而為之的堅定😘💖<br>不管未來發生甚麼 我永遠愛妳！❤️<br>💙💙💙</p>
+      <div class="button-container">
+          <button onclick="goToPreviousPage(4)">返回</button>
+          <button onclick="nextPage(4)">下一頁</button>
+      </div>
+  </div>
+    <div class="letter hidden" id="page5">
+        <h2 class="title">💙 真的好愛好愛妳 💙</h2>
+        <p id="message">謝謝妳願意成為我的寶寶，真的好喜歡妳好愛妳 💙💙💙<br>以後的每一天我都會好好珍惜妳，照顧妳，讓妳每天都開心幸福 😘💖<br><br>我愛妳，寶寶 💙💙💙</p>
+        <div class="button-container">
+            <button onclick="goToPreviousPage(5)">返回</button>
+            <button onclick="endMessage()">結束</button>
+        </div>
+    </div>
+    <script>
+        function nextPage(page) {
+            document.getElementById('page' + page).classList.add('hidden');
+            document.getElementById('page' + (page + 1)).classList.remove('hidden');
+        }
+        function goToPreviousPage(page) {
+           // document.querySelectorAll('.letter').forEach(el => el.classList.add('hidden'));
+            document.getElementById('page' + page).classList.add('hidden');
+            document.getElementById('page' + (page - 1)).classList.remove('hidden');
+        }
+        function goToFirstPage() {
+          window.location.href = "index.html";
+      }
+        function endMessage() {
+            alert("我永遠愛妳！❤️");
+        }
+    </script>
+</body>
+</html>
